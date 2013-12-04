@@ -11,7 +11,7 @@ threshold = 100
 current_depth = 0
 depth_image = 0;
 
-
+# windows and their initial states
 depth_window = 0;
 threshold_window = 0;
 
@@ -87,11 +87,8 @@ def show_threshold():
 
 
 
-# open initial window with controls to open additional windows - opencv doesnt have buttons, so we use trackbars
-cv.NamedWindow('Video')
-cv.CreateTrackbar('Depth Window', 'Video', depth_window, 1, toggle_depth_window)
-cv.CreateTrackbar('Threshold Window', 'Video', threshold_window, 1, toggle_threshold_window)
 
+# parse command line arguments
 arguments = sys.argv
 
 if '-h' in arguments or '--help' in arguments:
@@ -99,11 +96,29 @@ if '-h' in arguments or '--help' in arguments:
     print """
 MyKinect v0.0.1 
 ---------------
+Usage:
+sudo python my_kinect.py [-h --help -d -t]
+
+-h, --help - display this message
+-d - display depth window at start
+-t - display threshold window at start
+
 Controls:
 
 - ESC in window to close 
 - "s" key to save RGB image to RGB.jpg in current directory
 - "d" key to save DEPTH image to DEPTH.jpg in current directory."""
+
+if '-d' in arguments:
+    toggle_depth_window(1)
+if '-t' in arguments:
+    toggle_threshold_window(1)
+
+# open initial window with controls to open additional windows - opencv doesnt have buttons, so we use trackbars
+cv.NamedWindow('Video')
+cv.CreateTrackbar('Depth Window', 'Video', depth_window, 1, toggle_depth_window)
+cv.CreateTrackbar('Threshold Window', 'Video', threshold_window, 1, toggle_threshold_window)
+
  
 
 # main program loop
