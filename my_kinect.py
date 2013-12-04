@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import freenect
+import sys
 import cv
 import cv2
 import frame_convert
@@ -91,9 +92,19 @@ cv.NamedWindow('Video')
 cv.CreateTrackbar('Depth Window', 'Video', depth_window, 1, toggle_depth_window)
 cv.CreateTrackbar('Threshold Window', 'Video', threshold_window, 1, toggle_threshold_window)
 
+arguments = sys.argv
 
-#print welcome message to command line
-print('MyKinect v0.0.1 \nPress ESC in window to stop, \npress "s" key to save RGB image, \npress"d" key to save DEPTH image.')
+if '-h' in arguments or '--help' in arguments:
+    #print help/welcome message to command line
+    print """
+MyKinect v0.0.1 
+---------------
+Controls:
+
+- ESC in window to close 
+- "s" key to save RGB image to RGB.jpg in current directory
+- "d" key to save DEPTH image to DEPTH.jpg in current directory."""
+ 
 
 # main program loop
 while 1:
@@ -109,8 +120,8 @@ while 1:
     if key == 27:
         break;
     elif key == 115:
-		print '"s" key pressed!'
+		print '"s" key pressed, saving RGB image to file RGB.jpg'
 		cv2.imwrite('RGB.jpg', freenect.sync_get_video()[0]);
     elif key == 100 and depth_window:
-        print '"d" key pressed!'
+        print '"d" key pressed, saving depth image to file DEPTH.jpg'
         cv.SaveImage('DEPTH.jpg', depth_image)
