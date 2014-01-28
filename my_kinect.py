@@ -14,7 +14,7 @@ depth_image = 0;
 # windows and their initial states
 depth_window = 0;
 threshold_window = 0;
-detector_window = 1;
+detector_window = 0;
 
 def cv2array(im): 
   depth2dtype = { 
@@ -75,6 +75,20 @@ def toggle_depth_window(value):
         cv.NamedWindow('Depth')
         depth_window = 1
     
+# OPENCV GUI callbacks
+def toggle_detector_window(value):
+    global detector_window
+    
+    #window is opened and has to be closed
+    if detector_window == 1 and value == 0:
+        cv.DestroyWindow('Detector')
+        detector_window = 0
+    elif detector_window == 0 and value == 1:
+        cv.NamedWindow('Detector')
+        detector_window = 1
+    
+
+
 def toggle_threshold_window(value):
     global threshold_window
     
@@ -198,8 +212,9 @@ if '-t' in arguments:
 cv.NamedWindow('Video')
 cv.CreateTrackbar('Depth Window', 'Video', depth_window, 1, toggle_depth_window)
 cv.CreateTrackbar('Threshold Window', 'Video', threshold_window, 1, toggle_threshold_window)
+cv.CreateTrackbar('Detector Window', 'Video', detector_window, 1, toggle_detector_window)
 
-cv.NamedWindow('Detector')
+
  
 
 # main program loop
