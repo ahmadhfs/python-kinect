@@ -63,10 +63,19 @@ def show_depth():
     
     depth, timestamp = freenect.sync_get_depth()
     depth_image =  frame_convert.pretty_depth_cv(depth);
-    cv.ShowImage('Depth', depth_image) 
+    cv.ShowImage('Depth', resize_image(depth_image)) 
+
+
+def resize_image(image, height = 240, width = 320):
+    imageBuffer = image;
+    smallerImage = cv.CreateImage((width, height), imageBuffer.depth, imageBuffer.nChannels);
+    cv.Resize(imageBuffer, smallerImage, interpolation=cv.CV_INTER_CUBIC);
+    return smallerImage;
+
 
 def show_video():
-    cv.ShowImage('Video', frame_convert.video_cv(freenect.sync_get_video()[0]))
+    image = frame_convert.video_cv(freenect.sync_get_video()[0]);
+    cv.ShowImage('Video', resize_image(image))
 
 
 def show_threshold():
@@ -82,11 +91,7 @@ def show_threshold():
                                  1)
     cv.SetData(threshold_image, depth.tostring(),
               depth.dtype.itemsize * depth.shape[1])
-    cv.ShowImage('Threshold', threshold_image)
-
-
-
-
+    cv.ShowImage('Threshold', resize_image(threshold_image))
 
 # parse command line arguments
 arguments = sys.argv
@@ -108,6 +113,7 @@ Controls:
 - ESC in window to close 
 - "s" key to save RGB image to RGB.jpg in current directory
 - "d" key to save DEPTH image to DEPTH.jpg in current directory."""
+    exit();
 
 if '-d' in arguments:
     toggle_depth_window(1)
@@ -135,8 +141,8 @@ while 1:
     if key == 27:
         break;
     elif key == 115:
-		print '"s" key pressed, saving RGB image to file RGB.jpg'
-		cv2.imwrite('RGB.jpg', freenect.sync_get_video()[0]);
+        print '"s" key pressed, saving RGB image to file RGB.jpg'
+        cv2.imwrite('RGB.jpg', freenect.sync_get_video()[0]);
     elif key == 100 and depth_window:
         print '"d" key pressed, saving depth image to file DEPTH.jpg'
         cv.SaveImage('DEPTH.jpg', depth_image)
