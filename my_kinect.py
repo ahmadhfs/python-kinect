@@ -16,20 +16,6 @@ depth_window = 0;
 threshold_window = 0;
 detector_window = 1;
 
-
-# cascade classifiers
-face_cascade = cv2.CascadeClassifier('opencv_data/haarcascades/haarcascade_frontalface_default.xml')
-eye_cascade = cv2.CascadeClassifier('opencv_data/haarcascades/haarcascade_eye.xml')
-
-
-
-
-
-
-
-
-
-
 def cv2array(im): 
   depth2dtype = { 
         cv.IPL_DEPTH_8U: 'uint8', 
@@ -141,12 +127,29 @@ def show_video():
 
 def show_detector():
     image = frame_convert.video_cv(freenect.sync_get_video()[0]);
-    # print(type(image))
 
+    # cascade classifiers
+    face_cascade = cv2.CascadeClassifier('opencv_data/haarcascades/haarcascade_frontalface_default.xml')
+    eye_cascade = cv2.CascadeClassifier('opencv_data/haarcascades/haarcascade_eye.xml')
+
+    # convert image to grayscale to use it with classifers
     gray = cv2.cvtColor(cv2array(image), cv2.COLOR_BGR2GRAY);
 
-    # print(type(gray));
-    cv.ShowImage('Detector', array2cv(gray))
+    # save previous image and use copy
+    img = image;
+
+    # detect and highlight faces
+    faces = face_cascade.detectMultiScale(gray, 1.3, 5);
+    for (x,y,w,h) in faces:
+        cv.Rectangle(img,(x,y),(x+w,y+h),(0,0,255),2)
+
+    # detect and highlight eyes
+    eyes = eye_cascade.detectMultiScale(gray)
+    for (ex,ey,ew,eh) in eyes:
+        cv.Rectangle(img,(ex,ey),(ex+ew,ey+eh),(0,255,0),2)
+
+    # show detector window
+    cv.ShowImage('Detector', img)
 
 
 def show_threshold():
